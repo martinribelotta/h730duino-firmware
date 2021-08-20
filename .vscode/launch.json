@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/tst-h730.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32h7x.cfg",
+                "${workspaceFolder}/reset_config.cfg"
+            ],
+            "runToMain": true,
+            "svdFile": "${workspaceFolder}/STM32H73x.svd",
+            "rttConfig": {
+                "enabled": true,
+                "address": "auto",
+                "searchId": "SEGGER RTT",
+                "searchSize": 16,
+                "clearSearch": false,
+                "decoders": [
+                    {
+                        "label": "",
+                        "port": 0,
+                        "type": "console"
+                    }
+                ]
+            },
+            "preLaunchTask": "make all"
+        }
+    ]
+}
