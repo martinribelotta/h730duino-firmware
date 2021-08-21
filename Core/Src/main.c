@@ -24,6 +24,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "SEGGER_RTT.h"
+#include "tusb.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -151,19 +153,24 @@ int main(void)
   // MX_ETH_Init();
   /* USER CODE BEGIN 2 */
 
+  tusb_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   int count = 0;
+  uint32_t ticks = HAL_GetTick();
   while (1)
   {
-    HAL_GPIO_TogglePin(USR_LED_GPIO_Port, USR_LED_Pin);
-    HAL_Delay(500);
-    SEGGER_RTT_printf(0, "%d\n", count++);
+    if ((HAL_GetTick() - ticks) > 500) {
+      ticks = HAL_GetTick();
+      HAL_GPIO_TogglePin(USR_LED_GPIO_Port, USR_LED_Pin);
+      SEGGER_RTT_printf(0, "%d\n", count++);
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    tud_task();
   }
   /* USER CODE END 3 */
 }

@@ -23,6 +23,7 @@
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "tusb.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -200,6 +201,20 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
+
+// Despite being call USB2_OTG
+// OTG_FS is marked as RHPort0 by TinyUSB to be consistent across stm32 port
+void OTG_FS_IRQHandler(void)
+{
+  tud_int_handler(0);
+}
+
+// Despite being call USB2_OTG
+// OTG_HS is marked as RHPort1 by TinyUSB to be consistent across stm32 port
+void OTG_HS_IRQHandler(void)
+{
+  tud_int_handler(1);
+}
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
