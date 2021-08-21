@@ -101,9 +101,9 @@ static void MX_SDMMC1_SD_Init(void);
 static void MX_SPI4_Init(void);
 static void MX_UART4_Init(void);
 static void MX_USB_OTG_HS_PCD_Init(void);
-// static void MX_ETH_Init(void);
+static void MX_ETH_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void cdc_task(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -150,9 +150,8 @@ int main(void)
   MX_SPI4_Init();
   MX_UART4_Init();
   MX_USB_OTG_HS_PCD_Init();
-  // MX_ETH_Init();
+  MX_ETH_Init();
   /* USER CODE BEGIN 2 */
-
   tusb_init();
   /* USER CODE END 2 */
 
@@ -171,6 +170,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     tud_task();
+    cdc_task();
   }
   /* USER CODE END 3 */
 }
@@ -282,7 +282,6 @@ void PeriphCommonClock_Config(void)
   }
 }
 
-#if 0
 /**
   * @brief ETH Initialization Function
   * @param None
@@ -292,7 +291,7 @@ static void MX_ETH_Init(void)
 {
 
   /* USER CODE BEGIN ETH_Init 0 */
-
+  return;
   /* USER CODE END ETH_Init 0 */
 
    static uint8_t MACAddr[6];
@@ -331,7 +330,6 @@ static void MX_ETH_Init(void)
   /* USER CODE END ETH_Init 2 */
 
 }
-#endif
 
 /**
   * @brief FDCAN1 Initialization Function
@@ -776,11 +774,21 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(ETH_RST_GPIO_Port, &GPIO_InitStruct);
-
 }
 
 /* USER CODE BEGIN 4 */
-
+static void cdc_task(void)
+{
+  static uint32_t ticks = 0;
+  static int counter = 0;
+  if ((HAL_GetTick() - ticks) >= 500) {
+    static char buf[128];
+    ticks = HAL_GetTick();
+    snprintf(buf, sizeof(buf), "Hello world %d\r\n", counter++);
+    tud_cdc_write_str(buf);
+    tud_cdc_write_flush();
+  }
+}
 /* USER CODE END 4 */
 
 /**
