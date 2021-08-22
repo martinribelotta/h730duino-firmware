@@ -1,4 +1,4 @@
-TINYUSB_BASE = tinyusb-0.10.1
+TINYUSB_BASE := $(notdir $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
 
 C_SOURCES += \
 	$(TINYUSB_BASE)/src/tusb.c \
@@ -15,8 +15,7 @@ C_SOURCES += \
 	$(TINYUSB_BASE)/src/class/net/net_device.c \
 	$(TINYUSB_BASE)/src/class/usbtmc/usbtmc_device.c \
 	$(TINYUSB_BASE)/src/class/vendor/vendor_device.c \
-	$(TINYUSB_BASE)/src/portable/st/synopsys/dcd_synopsys.c \
-	Core/Src/usb_descriptors.c
+	$(TINYUSB_BASE)/src/portable/st/synopsys/dcd_synopsys.c
 
 C_INCLUDES += -I$(TINYUSB_BASE)/src
 

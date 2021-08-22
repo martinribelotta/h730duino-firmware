@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "SEGGER_RTT.h"
 #include "tusb.h"
+#include "printf.h"
 
 /* USER CODE END Includes */
 

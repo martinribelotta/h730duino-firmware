@@ -62,7 +62,6 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
-#include <stdio.h>
 
 // Tinyusb Common Headers
 #include "tusb_option.h"
