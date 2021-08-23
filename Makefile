@@ -24,6 +24,7 @@ DEBUG = 1
 # optimization
 OPT = -Og
 
+MODULES = mpaland-printf segger-rtt tinyusb
 
 #######################################
 # paths
@@ -39,6 +40,7 @@ C_SOURCES =  \
 Core/Src/main.c \
 Core/Src/stm32h7xx_it.c \
 Core/Src/stm32h7xx_hal_msp.c \
+Core/Src/system_stm32h7xx.c \
 Core/Src/usb_descriptors.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.c \
@@ -73,17 +75,12 @@ Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd_ex.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.c \
-Core/Src/system_stm32h7xx.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth.c \
-Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth_ex.c \
-segger/RTT/SEGGER_RTT_printf.c \
-segger/RTT/SEGGER_RTT.c \
-segger/Syscalls/SEGGER_RTT_Syscalls_GCC.c
+Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth_ex.c
 
 # ASM sources
 ASM_SOURCES =  \
-startup_stm32h730xx.s \
-segger/RTT/SEGGER_RTT_ASM_ARMv7M.s
+startup_stm32h730xx.s
 
 #######################################
 # binaries
@@ -140,9 +137,7 @@ C_INCLUDES =  \
 -IDrivers/STM32H7xx_HAL_Driver/Inc \
 -IDrivers/STM32H7xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32H7xx/Include \
--IDrivers/CMSIS/Include \
--Isegger/RTT
-
+-IDrivers/CMSIS/Include
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -Wextra -fdata-sections -ffunction-sections
@@ -176,8 +171,12 @@ LIBDIR =
 LDFLAGS := $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 LDFLAGS += -Wl,--print-memory-usage
 
-include tinyusb-0.10.1/tinyusb.mk
-include mpaland-printf/printf.mk
+# include segger/rtt.mk tinyusb-0.10.1/tinyusb.mk mpaland-printf/printf.mk
+
+M := $(addsuffix /module.mk, $(MODULES))
+$(info $(M))
+
+include $(M)
 
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
