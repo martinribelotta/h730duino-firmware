@@ -24,7 +24,7 @@ DEBUG = 1
 # optimization
 OPT = -Og
 
-MODULES = mpaland-printf segger-rtt tinyusb
+MODULES = app microrl mpaland-printf segger-rtt tinyusb
 
 #######################################
 # paths

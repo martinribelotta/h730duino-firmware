@@ -23,9 +23,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "SEGGER_RTT.h"
-#include "tusb.h"
-#include "printf.h"
 
 /* USER CODE END Includes */
 
@@ -104,12 +101,13 @@ static void MX_UART4_Init(void);
 static void MX_USB_OTG_HS_PCD_Init(void);
 static void MX_ETH_Init(void);
 /* USER CODE BEGIN PFP */
-static void cdc_task(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+extern void setup(void);
+extern void loop(void);
 /* USER CODE END 0 */
 
 /**
@@ -128,7 +126,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  SEGGER_RTT_WriteString(0, "Hello World!\n");
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -153,25 +151,22 @@ int main(void)
   MX_USB_OTG_HS_PCD_Init();
   MX_ETH_Init();
   /* USER CODE BEGIN 2 */
-  tusb_init();
+  setup();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int count = 0;
   uint32_t ticks = HAL_GetTick();
   while (1)
   {
+    loop();
     if ((HAL_GetTick() - ticks) > 500) {
       ticks = HAL_GetTick();
       HAL_GPIO_TogglePin(USR_LED_GPIO_Port, USR_LED_Pin);
-      SEGGER_RTT_printf(0, "%d\n", count++);
     }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    tud_task();
-    cdc_task();
   }
   /* USER CODE END 3 */
 }
@@ -778,18 +773,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-static void cdc_task(void)
-{
-  static uint32_t ticks = 0;
-  static int counter = 0;
-  if ((HAL_GetTick() - ticks) >= 500) {
-    static char buf[128];
-    ticks = HAL_GetTick();
-    snprintf(buf, sizeof(buf), "Hello world %d\r\n", counter++);
-    tud_cdc_write_str(buf);
-    tud_cdc_write_flush();
-  }
-}
+
 /* USER CODE END 4 */
 
 /**

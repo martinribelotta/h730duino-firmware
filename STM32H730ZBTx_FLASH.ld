@@ -94,6 +94,12 @@ SECTIONS
     KEEP (*(.fini))
 
     . = ALIGN(4);
+    _begin_command_table = .;
+    KEEP (*(.command_table))
+    . = ALIGN(4);
+    _end_command_table = .;
+
+    . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
   } >FLASH
 
