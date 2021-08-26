@@ -98,6 +98,7 @@ CC = $(PREFIX)gcc
 AS = $(PREFIX)gcc -x assembler-with-cpp
 CP = $(PREFIX)objcopy
 SZ = $(PREFIX)size
+OD = $(PREFIX)objdump
 endif
 HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
@@ -174,29 +175,28 @@ LDFLAGS += -Wl,--print-memory-usage
 # include segger/rtt.mk tinyusb-0.10.1/tinyusb.mk mpaland-printf/printf.mk
 
 M := $(addsuffix /module.mk, $(MODULES))
-$(info $(M))
 
 include $(M)
 
 # default action: build all
-all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
+all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin $(BUILD_DIR)/$(TARGET).lst
 
 
 #######################################
 # build the application
 #######################################
 # list of objects
-OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
+OBJECTS = $(addprefix $(BUILD_DIR)/o/,$(notdir $(C_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
 # list of ASM program objects
-OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
+OBJECTS += $(addprefix $(BUILD_DIR)/o/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
 
-$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
+$(BUILD_DIR)/o/%.o: %.c | $(BUILD_DIR)
 	@echo CC $(<F)
-	$(Q)$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	$(Q)$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/o/$(notdir $(<:.c=.lst)) $< -o $@
 
-$(BUILD_DIR)/%.o: %.s | $(BUILD_DIR)
+$(BUILD_DIR)/o/%.o: %.s | $(BUILD_DIR)
 	@echo AS $(<F)
 	$(Q)$(AS) -c $(CFLAGS) $< -o $@
 
@@ -212,9 +212,13 @@ $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 	@echo GEN $(@F)
 	$(Q)$(BIN) $< $@	
+		
+$(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
+	@echo GEN $(@F)
+	$(Q)$(OD) -dsx $< > $@	
 	
 $(BUILD_DIR):
-	@mkdir $@		
+	@mkdir -p $@/o		
 
 #######################################
 # clean up
