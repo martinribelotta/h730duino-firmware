@@ -160,7 +160,7 @@ int main(void)
   while (1)
   {
     loop();
-    if ((HAL_GetTick() - ticks) > 500) {
+    if ((HAL_GetTick() - ticks) > 250) {
       ticks = HAL_GetTick();
       HAL_GPIO_TogglePin(USR_LED_GPIO_Port, USR_LED_Pin);
     }
@@ -465,12 +465,12 @@ static void MX_OCTOSPI2_Init(void)
   hospi2.Init.FifoThreshold = 1;
   hospi2.Init.DualQuad = HAL_OSPI_DUALQUAD_DISABLE;
   hospi2.Init.MemoryType = HAL_OSPI_MEMTYPE_MICRON;
-  hospi2.Init.DeviceSize = 32;
+  hospi2.Init.DeviceSize = 22;
   hospi2.Init.ChipSelectHighTime = 1;
   hospi2.Init.FreeRunningClock = HAL_OSPI_FREERUNCLK_DISABLE;
   hospi2.Init.ClockMode = HAL_OSPI_CLOCK_MODE_0;
   hospi2.Init.WrapSize = HAL_OSPI_WRAP_NOT_SUPPORTED;
-  hospi2.Init.ClockPrescaler = 1;
+  hospi2.Init.ClockPrescaler = 4;
   hospi2.Init.SampleShifting = HAL_OSPI_SAMPLE_SHIFTING_NONE;
   hospi2.Init.DelayHoldQuarterCycle = HAL_OSPI_DHQC_DISABLE;
   hospi2.Init.ChipSelectBoundary = 1;

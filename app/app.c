@@ -1,32 +1,32 @@
 #include "SEGGER_RTT.h"
-#include "tusb.h"
-#include "printf.h"
-#include "microrl.h"
 #include "exec.h"
+#include "microrl.h"
+#include "printf.h"
+#include "qspi_ffi.h"
+#include "tusb.h"
 
 static microrl_t rl;
 
 static void cdc_task(void)
 {
-  while (tud_cdc_available() > 0) {
-    char c = tud_cdc_read_char();
-    microrl_insert_char(&rl, c);
-  }
+    while (tud_cdc_available() > 0) {
+        char c = tud_cdc_read_char();
+        microrl_insert_char(&rl, c);
+    }
 }
 
-static void cdc_print(const char *s)
+static void cdc_print(const char* s)
 {
-  tud_cdc_write_str(s);
-  tud_cdc_write_flush();
+    tud_cdc_write_str(s);
+    tud_cdc_write_flush();
 }
 
 void setup()
 {
-  SEGGER_RTT_WriteString(0, "Hello World!\n");
-  tusb_init();
-  microrl_init(&rl, cdc_print);
-  rl.execute = exec_commands;
-
+    SEGGER_RTT_WriteString(0, "Hello World!\n");
+    tusb_init();
+    microrl_init(&rl, cdc_print);
+    rl.execute = exec_commands;
 }
 
 void loop()
@@ -37,7 +37,12 @@ void loop()
 
 void _putchar(char character)
 {
-  tud_cdc_write_char(character);
-  if (character == '\n')
-    tud_cdc_write_flush();
+    while (tud_cdc_write_char(character) == 0) {
+        tud_cdc_write_flush();
+        tud_task();
+    }
+    if (character == '\n') {
+        tud_cdc_write_flush();
+        tud_task();
+    }
 }

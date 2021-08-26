@@ -1,20 +1,26 @@
 #ifndef __EXEC_H__
 #define __EXEC_H__
 
-#define COMMAND_ENTRY(name, func, descr) \
-exec_command_entry_t __entry_##name __attribute__((used, section(".command_table"))) = { #name, descr, func }
+#define COMMAND_ENTRY_ATTR __attribute__((used, section(".command_table")))
+
+#define COMMAND_ENTRY(name, func, descr)                       \
+    exec_command_entry_t __entry_##name COMMAND_ENTRY_ATTR = { \
+        #name,                                                 \
+        descr,                                                 \
+        func                                                   \
+    }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct {
-    const char *command;
-    const char *description;
-    int (*func)(int argc, const char * const * argv);
+    const char* command;
+    const char* description;
+    int (*func)(int argc, const char* const* argv);
 } exec_command_entry_t;
 
-int exec_commands(int argc, const char * const * argv);
+int exec_commands(int argc, const char* const* argv);
 
 #ifdef __cplusplus
 }

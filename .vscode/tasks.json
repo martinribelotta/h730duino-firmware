@@ -17,6 +17,16 @@
             "label": "make flash",
             "type": "shell",
             "command": "make flash"
+        },
+        {
+            "label": "make flash dfu",
+            "type": "shell",
+            "command": "make flash-dfu"
+        },
+        {
+            "label": "make dfu run",
+            "type": "shell",
+            "command": "make dfu-run"
         }
     ]
 }

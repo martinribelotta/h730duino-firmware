@@ -225,6 +225,12 @@ clean:
 flash: $(BUILD_DIR)/$(TARGET).elf
 	$(OOCD) -f interface/stlink-v2.cfg -f target/stm32h7x.cfg -c "reset_config none; init; reset halt; program $(BUILD_DIR)/$(TARGET).elf verify reset exit"
 
+flash-dfu: $(BUILD_DIR)/$(TARGET).bin
+	dfu-util -a 0 -s 0x08000000:leave -D $<
+
+dfu-run: ;
+	python3 pydfu.py -x
+
 #######################################
 # dependencies
 #######################################
