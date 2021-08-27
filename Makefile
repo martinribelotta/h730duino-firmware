@@ -103,7 +103,8 @@ endif
 HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
 OOCD = /opt/xpack-openocd-0.11.0-1/bin/openocd
- 
+PY = python3
+
 #######################################
 # CFLAGS
 #######################################
@@ -178,8 +179,14 @@ M := $(addsuffix /module.mk, $(MODULES))
 
 include $(M)
 
+ALL_TARGETS := $(BUILD_DIR)/$(TARGET).elf
+ALL_TARGETS += $(BUILD_DIR)/$(TARGET).hex
+ALL_TARGETS += $(BUILD_DIR)/$(TARGET).bin
+ALL_TARGETS += $(BUILD_DIR)/$(TARGET).lst
+ALL_TARGETS += $(BUILD_DIR)/$(TARGET).dfu
+
 # default action: build all
-all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin $(BUILD_DIR)/$(TARGET).lst
+all: $(ALL_TARGETS)
 
 
 #######################################
@@ -208,17 +215,21 @@ $(BUILD_DIR)/$(TARGET).elf: $(OBJECTS)
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 	@echo GEN $(@F)
 	$(Q)$(HEX) $< $@
-	
+
 $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 	@echo GEN $(@F)
-	$(Q)$(BIN) $< $@	
-		
+	$(Q)$(BIN) $< $@
+
+$(BUILD_DIR)/%.dfu: $(BUILD_DIR)/%.bin | $(BUILD_DIR)
+	@echo GEN $(@F)
+	$(Q)$(PY) tools/dfu.py -b 0x08000000:$< $@
+
 $(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 	@echo GEN $(@F)
-	$(Q)$(OD) -dsx $< > $@	
-	
+	$(Q)$(OD) -dsx $< > $@
+
 $(BUILD_DIR):
-	@mkdir -p $@/o		
+	@mkdir -p $@/o
 
 #######################################
 # clean up
@@ -229,11 +240,13 @@ clean:
 flash: $(BUILD_DIR)/$(TARGET).elf
 	$(OOCD) -f interface/stlink-v2.cfg -f target/stm32h7x.cfg -c "reset_config none; init; reset halt; program $(BUILD_DIR)/$(TARGET).elf verify reset exit"
 
-flash-dfu: $(BUILD_DIR)/$(TARGET).bin
-	dfu-util -a 0 -s 0x08000000:leave -D $<
+flash-dfu: $(BUILD_DIR)/$(TARGET).dfu
+	@echo FLASH over DFU $(<F)
+	$(Q)$(PY) tools/pydfu.py -u $< -v
 
 dfu-run: ;
-	python3 pydfu.py -x
+	@echo RUN APP
+	$(Q)$(PY) tools/tools/pydfu.py -x
 
 #######################################
 # dependencies
