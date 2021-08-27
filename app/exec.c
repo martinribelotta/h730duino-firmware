@@ -35,7 +35,7 @@ static int func_help(int argc, const char* const* argv)
     for (const exec_command_entry_t* e = &_begin_command_table;
          e < &_end_command_table;
          e++) {
-        printf(" %s %20s\n", e->command, e->description);
+        printf(" %-20s %s\n", e->command, e->description);
     }
     return 0;
 }
