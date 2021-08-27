@@ -6,6 +6,8 @@
 
 #include <stm32h7xx.h>
 
+#include "version.h"
+
 extern const exec_command_entry_t _begin_command_table;
 extern const exec_command_entry_t _end_command_table;
 
@@ -51,3 +53,13 @@ static int func_reset(int argc, const char* const* argv)
 }
 
 static const COMMAND_ENTRY(reset, func_reset, "Reset system");
+
+static int func_version(int argc, const char* const* argv)
+{
+    (void)argc;
+    (void)argv;
+    printf("Version:\n%s\n", VERSION_STRING);
+    return 0;
+}
+
+static const COMMAND_ENTRY(ver, func_version, "Show version");

@@ -199,6 +199,14 @@ vpath %.c $(sort $(dir $(C_SOURCES)))
 OBJECTS += $(addprefix $(BUILD_DIR)/o/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
 
+FORCE_DEPS=app/version.c
+
+app/version.c: ;
+	@touch $@
+
+.FORCE:
+$(FORCE_DEPS): .FORCE
+
 $(BUILD_DIR)/o/%.o: %.c | $(BUILD_DIR)
 	@echo CC $(<F)
 	$(Q)$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/o/$(notdir $(<:.c=.lst)) $< -o $@
