@@ -33,10 +33,15 @@ typedef struct {
 #define SCHED_FUNCTOR(ctx, func) ((sched_func_t) { ctx, func })
 
 extern void sched_init(sched_t* self, sched_entry_t* pool, size_t count);
-extern void sched_scheduleDefer(sched_t* self, sched_func_t e);
-extern void sched_scheduleEvery(sched_t* self, timedelta_t t, sched_func_t e);
-extern void sched_scheduleAt(sched_t* self, timestamp_t t, sched_func_t e);
-extern void sched_scheduleBefore(sched_t* self, timedelta_t t, sched_func_t e);
+extern sched_entry_t* sched_scheduleDefer(sched_t* self, sched_func_t e);
+extern sched_entry_t* sched_scheduleEvery(sched_t* self, timedelta_t t, sched_func_t e);
+extern sched_entry_t* sched_scheduleAt(sched_t* self, timestamp_t t, sched_func_t e);
+extern sched_entry_t* sched_scheduleBefore(sched_t* self, timedelta_t t, sched_func_t e);
+extern void sched_scheduleEntry(sched_t* self, sched_entry_t* p, timestamp_t t, timedelta_t r, sched_func_t e);
+extern void sched_scheduleEntryDefer(sched_t* self, sched_entry_t* p, sched_func_t e);
+extern void sched_scheduleEntryEvery(sched_t* self, sched_entry_t* p, timedelta_t t, sched_func_t e);
+extern void sched_scheduleEntryAt(sched_t* self, sched_entry_t* p, timestamp_t t, sched_func_t e);
+extern void sched_scheduleEntryBefore(sched_t* self, sched_entry_t* p, timedelta_t t, sched_func_t e);
 extern void sched_pool(sched_t* self);
 
 extern timestamp_t __sched_priv_get_tick(void);

@@ -25,44 +25,62 @@ static void entry_free(sched_entry_t *e) {
     e->functor.func = NULL;
 }
 
-extern void sched_scheduleDefer(sched_t* self, sched_func_t e)
+extern sched_entry_t* sched_scheduleDefer(sched_t* self, sched_func_t e)
 {
     sched_entry_t* p = find_free(self);
-    if (p) {
-        p->functor = e;
-        p->exec_time = __sched_priv_get_tick();
-        p->reload = 0;
-    }
+    sched_scheduleEntryDefer(self, p, e);
+    return p;
 }
 
-extern void sched_scheduleEvery(sched_t* self, timedelta_t t, sched_func_t e)
+extern sched_entry_t* sched_scheduleEvery(sched_t* self, timedelta_t t, sched_func_t e)
 {
     sched_entry_t* p = find_free(self);
-    if (p) {
-        p->functor = e;
-        p->exec_time = __sched_priv_get_tick() + t;
-        p->reload = t;
-    }
+    sched_scheduleEntryEvery(self, p, t, e);
+    return p;
 }
 
-extern void sched_scheduleAt(sched_t* self, timestamp_t t, sched_func_t e)
+extern sched_entry_t* sched_scheduleAt(sched_t* self, timestamp_t t, sched_func_t e)
 {
     sched_entry_t* p = find_free(self);
+    sched_scheduleEntryAt(self, p, t, e);
+    return p;
+}
+
+extern sched_entry_t* sched_scheduleBefore(sched_t* self, timedelta_t t, sched_func_t e)
+{
+    sched_entry_t* p = find_free(self);
+    sched_scheduleEntryBefore(self, p, t, e);
+    return p;
+}
+
+void sched_scheduleEntry(sched_t* self, sched_entry_t* p, timestamp_t t, timedelta_t r, sched_func_t e)
+{
+    (void) self;
     if (p) {
         p->functor = e;
         p->exec_time = t;
-        p->reload = 0;
+        p->reload = r;
     }
 }
 
-extern void sched_scheduleBefore(sched_t* self, timedelta_t t, sched_func_t e)
+void sched_scheduleEntryDefer(sched_t* self, sched_entry_t* p, sched_func_t e)
 {
-    sched_entry_t* p = find_free(self);
-    if (p) {
-        p->functor = e;
-        p->exec_time = __sched_priv_get_tick() + t;
-        p->reload = 0;
-    }
+    sched_scheduleEntryAt(self, p, __sched_priv_get_tick(), e);
+}
+
+void sched_scheduleEntryEvery(sched_t* self, sched_entry_t* p, timedelta_t t, sched_func_t e)
+{
+    sched_scheduleEntry(self, p, __sched_priv_get_tick() + t, t, e);
+}
+
+void sched_scheduleEntryAt(sched_t* self, sched_entry_t* p, timestamp_t t, sched_func_t e)
+{
+    sched_scheduleEntry(self, p, t, 0, e);
+}
+
+void sched_scheduleEntryBefore(sched_t* self, sched_entry_t* p, timedelta_t t, sched_func_t e)
+{
+    sched_scheduleEntryAt(self, p, __sched_priv_get_tick() + t, e);
 }
 
 extern void sched_pool(sched_t* self)

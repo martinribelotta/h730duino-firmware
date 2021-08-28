@@ -7,9 +7,12 @@
 #include "sched.h"
 #include "main.h"
 
+extern int sscanf(const char *buf, const char *fmt, ...) __attribute__((format(scanf, 2, 3)));
+
 static microrl_t rl;
 static sched_t sched;
 static sched_entry_t sched_list[10];
+static sched_entry_t *blink_sched;
 
 static void cdc_task(void)
 {
@@ -38,8 +41,25 @@ void setup()
     microrl_init(&rl, cdc_print);
     rl.execute = exec_commands;
     sched_init(&sched, sched_list, 10);
-    sched_scheduleEvery(&sched, 250, SCHED_FUNCTOR(NULL, blink));
+    blink_sched = sched_scheduleEvery(&sched, 250, SCHED_FUNCTOR(NULL, blink));
 }
+
+static int func_blink(int argc, const char *const *argv)
+{
+    int val;
+    if (argc < 2) {
+        printf("Usage: %s <interval milis>\n", argv[0]);
+        return 0;
+    }
+    if (sscanf(argv[1], "%i", &val) != 1) {
+        printf("Cannot parse number <<%s>>\n", argv[1]);
+        return -1;
+    }
+    sched_scheduleEntryEvery(&sched, blink_sched, val, SCHED_FUNCTOR(NULL, blink));
+    return 0;
+}
+
+static COMMAND_ENTRY(blink, func_blink, "Change blinking time");
 
 void loop()
 {
