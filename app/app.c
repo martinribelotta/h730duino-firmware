@@ -4,8 +4,12 @@
 #include "printf.h"
 #include "qspi_ffi.h"
 #include "tusb.h"
+#include "sched.h"
+#include "main.h"
 
 static microrl_t rl;
+static sched_t sched;
+static sched_entry_t sched_list[10];
 
 static void cdc_task(void)
 {
@@ -21,16 +25,25 @@ static void cdc_print(const char* s)
     tud_cdc_write_flush();
 }
 
+static void blink(void *ctx)
+{
+    (void) ctx;
+    HAL_GPIO_TogglePin(USR_LED_GPIO_Port, USR_LED_Pin);
+}
+
 void setup()
 {
     SEGGER_RTT_WriteString(0, "Hello World!\n");
     tusb_init();
     microrl_init(&rl, cdc_print);
     rl.execute = exec_commands;
+    sched_init(&sched, sched_list, 10);
+    sched_scheduleEvery(&sched, 250, SCHED_FUNCTOR(NULL, blink));
 }
 
 void loop()
 {
+    sched_pool(&sched);
     tud_task();
     cdc_task();
 }

@@ -156,14 +156,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint32_t ticks = HAL_GetTick();
   while (1)
   {
     loop();
-    if ((HAL_GetTick() - ticks) > 250) {
-      ticks = HAL_GetTick();
-      HAL_GPIO_TogglePin(USR_LED_GPIO_Port, USR_LED_Pin);
-    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
