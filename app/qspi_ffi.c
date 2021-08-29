@@ -8,6 +8,7 @@
 #include <printf.h>
 
 #include "exec.h"
+#include "utils.h"
 
 #include <memory.h>
 
@@ -168,17 +169,6 @@ size_t qspi_read(uint8_t* buf, uint32_t addr, size_t count)
     return count;
 }
 
-static void hexdump(uint8_t* buf, size_t n)
-{
-    for (size_t i = 0; i < n; i++) {
-        if ((i % 16) == 0) {
-            printf("\n%08X: ", i);
-        }
-        printf("%02X ", buf[i]);
-    }
-    printf("\n");
-}
-
 static int qspi_cmd(int argc, const char* const* argv)
 {
     (void)argc;
@@ -191,7 +181,7 @@ static int qspi_cmd(int argc, const char* const* argv)
     static uint8_t buf[32];
     memset(buf, 1, sizeof(buf));
     qspi_read(buf, 0, sizeof(buf));
-    hexdump(buf, sizeof(buf));
+    hexdump(buf, 0, sizeof(buf));
     return 0;
 }
 

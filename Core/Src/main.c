@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "string.h"
+#include "fatfs.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -150,6 +151,7 @@ int main(void)
   MX_UART4_Init();
   MX_USB_OTG_HS_PCD_Init();
   MX_ETH_Init();
+  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
   setup();
   /* USER CODE END 2 */
@@ -465,7 +467,7 @@ static void MX_OCTOSPI2_Init(void)
   hospi2.Init.FreeRunningClock = HAL_OSPI_FREERUNCLK_DISABLE;
   hospi2.Init.ClockMode = HAL_OSPI_CLOCK_MODE_0;
   hospi2.Init.WrapSize = HAL_OSPI_WRAP_NOT_SUPPORTED;
-  hospi2.Init.ClockPrescaler = 4;
+  hospi2.Init.ClockPrescaler = 8;
   hospi2.Init.SampleShifting = HAL_OSPI_SAMPLE_SHIFTING_NONE;
   hospi2.Init.DelayHoldQuarterCycle = HAL_OSPI_DHQC_DISABLE;
   hospi2.Init.ChipSelectBoundary = 1;
@@ -574,10 +576,6 @@ static void MX_SDMMC1_SD_Init(void)
   hsd1.Init.BusWide = SDMMC_BUS_WIDE_1B;
   hsd1.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
   hsd1.Init.ClockDiv = 0;
-  if (HAL_SD_Init(&hsd1) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN SDMMC1_Init 2 */
 
   /* USER CODE END SDMMC1_Init 2 */
@@ -765,6 +763,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(ETH_RST_GPIO_Port, &GPIO_InitStruct);
+
 }
 
 /* USER CODE BEGIN 4 */

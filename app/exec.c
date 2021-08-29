@@ -7,14 +7,10 @@
 #include <stm32h7xx.h>
 
 #include "version.h"
+#include "utils.h"
 
 extern const exec_command_entry_t _begin_command_table;
 extern const exec_command_entry_t _end_command_table;
-
-static inline bool isEq(const char* a, const char* b)
-{
-    return 0 == strcmp(a, b);
-}
 
 int exec_commands(int argc, const char* const* argv)
 {
