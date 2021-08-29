@@ -2,6 +2,8 @@
 
 This repository contains the hardware test for [h730 duino board](https://github.com/martinribelotta/h730duino)
 
+![image](https://user-images.githubusercontent.com/692175/131262784-fd6a937e-8639-4dd6-a8fb-4721770d65e2.png)
+
 ## Project content
 
  - Initialization code
