@@ -6,8 +6,7 @@
 #include "tusb.h"
 #include "sched.h"
 #include "main.h"
-
-extern int sscanf(const char *buf, const char *fmt, ...) __attribute__((format(scanf, 2, 3)));
+#include "scanf.h"
 
 static microrl_t rl;
 static sched_t sched;

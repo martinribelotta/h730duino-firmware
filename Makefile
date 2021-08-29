@@ -24,7 +24,7 @@ DEBUG = 1
 # optimization
 OPT = -Og
 
-MODULES = app microrl mpaland-printf segger-rtt tinyusb
+MODULES = app microrl mpaland-printf segger-rtt tinyusb hisahi-scanf
 
 #######################################
 # paths
@@ -179,7 +179,7 @@ endif
 LDSCRIPT = STM32H730ZBTx_FLASH.ld
 
 # libraries
-LIBS = -lc -lm -lnosys -ffreestanding
+LIBS = -nolibc -lm -lnosys -ffreestanding 
 LIBDIR = 
 LDFLAGS := $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 LDFLAGS += -Wl,--print-memory-usage
