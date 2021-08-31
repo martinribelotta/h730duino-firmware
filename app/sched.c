@@ -22,7 +22,7 @@ static sched_entry_t *find_free(sched_t *self)
 }
 
 static void entry_free(sched_entry_t *e) {
-    e->functor.func = NULL;
+    memset(e, 0, sizeof(sched_entry_t));
 }
 
 extern sched_entry_t* sched_scheduleDefer(sched_t* self, sched_func_t e)

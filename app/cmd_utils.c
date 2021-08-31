@@ -24,6 +24,7 @@ static int cmd_memdump(int argc, const char* const* argv)
             return -1;
         }
     }
+    printf("Dump %ld bytes from 0x%08lX:\n", count, addr);
     hexdump((uint8_t*)addr, addr, count);
     return 0;
 }

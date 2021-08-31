@@ -1,17 +1,27 @@
 #include "SEGGER_RTT.h"
 #include "exec.h"
+#include "main.h"
 #include "microrl.h"
 #include "printf.h"
 #include "qspi_ffi.h"
-#include "tusb.h"
-#include "sched.h"
-#include "main.h"
 #include "scanf.h"
+#include "sched.h"
+#include "tusb.h"
 
 static microrl_t rl;
 static sched_t sched;
 static sched_entry_t sched_list[10];
-static sched_entry_t *blink_sched;
+static sched_entry_t* blink_sched;
+
+static void print_promt(void* p)
+{
+    (void)p;
+    if (tud_cdc_connected()) {
+        microrl_print_prompt(&rl);
+    } else {
+        sched_scheduleBefore(&sched, 200, SCHED_FUNCTOR(NULL, print_promt));
+    }
+}
 
 static void cdc_task(void)
 {
@@ -27,9 +37,9 @@ static void cdc_print(const char* s)
     tud_cdc_write_flush();
 }
 
-static void blink(void *ctx)
+static void blink(void* ctx)
 {
-    (void) ctx;
+    (void)ctx;
     HAL_GPIO_TogglePin(USR_LED_GPIO_Port, USR_LED_Pin);
 }
 
@@ -41,13 +51,14 @@ void setup()
     rl.execute = exec_commands;
     sched_init(&sched, sched_list, 10);
     blink_sched = sched_scheduleEvery(&sched, 250, SCHED_FUNCTOR(NULL, blink));
+    sched_scheduleBefore(&sched, 200, SCHED_FUNCTOR(NULL, print_promt));
 }
 
-static int func_blink(int argc, const char *const *argv)
+static int func_blink(int argc, const char* const* argv)
 {
     int val;
     if (argc < 2) {
-        printf("Usage: %s <interval milis>\n", argv[0]);
+        printf("Usage: %s <interval millis>\n", argv[0]);
         return 0;
     }
     if (sscanf(argv[1], "%i", &val) != 1) {
