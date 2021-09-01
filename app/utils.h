@@ -10,6 +10,15 @@
 #define FOREACH(i, a) for ( typeof(*a) *i = a; i < (a + ARRAY_SIZE(a)); i++)
 
 #ifdef __cplusplus
+template<typename T, size_t N>
+size_t arraySize(const T (&) [N]) {
+    return N;
+}
+
+#endif
+
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 

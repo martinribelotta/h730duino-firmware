@@ -1,10 +1,13 @@
-#ifndef _MICRORL_H_
-#define _MICRORL_H_
+#ifndef MICRORL
+#define MICRORL
+
+#include <stdbool.h>
 
 #include "config.h"
 
-#define true  1
-#define false 0
+#ifdef __cplusplus
+extern "C" {
+#endif
 
  /* define the Key codes */
 #define KEY_NUL 0 /**< ^@ Null character */
@@ -117,4 +120,8 @@ void microrl_insert_char (microrl_t * pThis, int ch);
 
 void microrl_print_prompt (microrl_t * pThis);
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* MICRORL */

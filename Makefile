@@ -90,6 +90,8 @@ Middlewares/Third_Party/FatFs/src/option/ccsbcs.c
 ASM_SOURCES =  \
 startup_stm32h730xx.s
 
+CXX_SOURCES =
+
 #######################################
 # binaries
 #######################################
@@ -98,11 +100,13 @@ PREFIX = arm-none-eabi-
 # either it can be added to the PATH environment variable.
 ifdef GCC_PATH
 CC = $(GCC_PATH)/$(PREFIX)gcc
+CXX = $(GCC_PATH)/$(PREFIX)gcc
 AS = $(GCC_PATH)/$(PREFIX)gcc -x assembler-with-cpp
 CP = $(GCC_PATH)/$(PREFIX)objcopy
 SZ = $(GCC_PATH)/$(PREFIX)size
 else
 CC = $(PREFIX)gcc
+CXX = $(PREFIX)gcc
 AS = $(PREFIX)gcc -x assembler-with-cpp
 CP = $(PREFIX)objcopy
 SZ = $(PREFIX)size
@@ -156,6 +160,7 @@ C_INCLUDES =  \
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -Wextra -fdata-sections -ffunction-sections
 
 CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -Wextra -fdata-sections -ffunction-sections -ffreestanding
+CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -g -gdwarf-2
@@ -206,13 +211,15 @@ all: $(ALL_TARGETS)
 # list of objects
 OBJECTS = $(addprefix $(BUILD_DIR)/o/,$(notdir $(C_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
+OBJECTS += $(addprefix $(BUILD_DIR)/o/,$(notdir $(CXX_SOURCES:.cpp=.o)))
+vpath %.cpp $(sort $(dir $(CXX_SOURCES)))
 # list of ASM program objects
 OBJECTS += $(addprefix $(BUILD_DIR)/o/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
 
 FORCE_DEPS=app/version.c
 
-app/version.c: ;
+$(FORCE_DEPS): ;
 	@touch $@
 
 .FORCE:
@@ -221,6 +228,10 @@ $(FORCE_DEPS): .FORCE
 $(BUILD_DIR)/o/%.o: %.c | $(BUILD_DIR)
 	@echo CC $(<F)
 	$(Q)$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/o/$(notdir $(<:.c=.lst)) $< -o $@
+
+$(BUILD_DIR)/o/%.o: %.cpp | $(BUILD_DIR)
+	@echo CXX $(<F)
+	$(Q)$(CXX) -c $(CXXFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/o/$(notdir $(<:.cpp=.lst)) $< -o $@
 
 $(BUILD_DIR)/o/%.o: %.s | $(BUILD_DIR)
 	@echo AS $(<F)
@@ -270,6 +281,6 @@ dfu-run: ;
 #######################################
 # dependencies
 #######################################
--include $(wildcard $(BUILD_DIR)/*.d)
+-include $(wildcard $(BUILD_DIR)/o/*.d)
 
 # *** EOF ***
