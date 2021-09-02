@@ -42,6 +42,7 @@ Core/Src/stm32h7xx_it.c \
 Core/Src/stm32h7xx_hal_msp.c \
 Core/Src/system_stm32h7xx.c \
 Core/Src/usb_descriptors.c \
+Core/Src/startup.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.c \
 Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc_ex.c \
@@ -87,8 +88,8 @@ Middlewares/Third_Party/FatFs/src/option/syscall.c \
 Middlewares/Third_Party/FatFs/src/option/ccsbcs.c
 
 # ASM sources
-ASM_SOURCES =  \
-startup_stm32h730xx.s
+# ASM_SOURCES =  \
+# startup_stm32h730xx.s
 
 CXX_SOURCES =
 
@@ -256,7 +257,7 @@ $(BUILD_DIR)/%.dfu: $(BUILD_DIR)/%.bin | $(BUILD_DIR)
 
 $(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 	@echo GEN $(@F)
-	$(Q)$(OD) -dsx $< > $@
+	$(Q)$(OD) -dSx $< > $@
 
 $(BUILD_DIR):
 	@mkdir -p $@/o

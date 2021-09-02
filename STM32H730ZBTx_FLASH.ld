@@ -52,22 +52,23 @@
 /* Entry Point */
 ENTRY(Reset_Handler)
 
-/* Highest address of the user mode stack */
-_estack = 0x20020000;    /* end of RAM */
-/* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 0x200;      /* required amount of heap  */
-_Min_Stack_Size = 0x400; /* required amount of stack */
-
 /* Specify the memory areas */
 MEMORY
 {
-DTCMRAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
-RAM_D1 (xrw)      : ORIGIN = 0x24000000, LENGTH = 320K
-RAM_D2 (xrw)      : ORIGIN = 0x30000000, LENGTH = 32K
-RAM_D3 (xrw)      : ORIGIN = 0x38000000, LENGTH = 16K
-ITCMRAM (xrw)      : ORIGIN = 0x00000000, LENGTH = 64K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 128K
+DTCMRAM (xrw) : ORIGIN = 0x20000000, LENGTH = 128K
+RAM_D1 (xrw)  : ORIGIN = 0x24000000, LENGTH = 320K
+RAM_D2 (xrw)  : ORIGIN = 0x30000000, LENGTH = 32K
+RAM_D3 (xrw)  : ORIGIN = 0x38000000, LENGTH = 16K
+ITCMRAM (xrw) : ORIGIN = 0x00000000, LENGTH = 64K
+FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 128K
 }
+
+/* Highest address of the user mode stack */
+_estack = ORIGIN(DTCMRAM) + LENGTH(DTCMRAM);    /* end of RAM */
+__StackTop = _estack;
+/* Generate a link error if heap and stack don't fit into RAM */
+_Min_Heap_Size = 0x200;      /* required amount of heap  */
+_Min_Stack_Size = 0x400; /* required amount of stack */
 
 /* Define output sections */
 SECTIONS
@@ -78,6 +79,40 @@ SECTIONS
     . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
+  } >FLASH
+
+  .memory_tables :
+  {
+
+    . = ALIGN(4);
+
+    __copy_table_start__ = .;
+
+    LONG(LOADADDR(.data));
+    LONG(ADDR(.data));
+    LONG(SIZEOF(.data) / 4);
+
+    LONG(LOADADDR(.itcmtext));
+    LONG(ADDR(.itcmtext));
+    LONG(SIZEOF(.itcmtext) / 4);
+
+    LONG(LOADADDR(.dtcmdata));
+    LONG(ADDR(.dtcmdata));
+    LONG(SIZEOF(.dtcmdata) / 4);
+
+    __copy_table_end__ = .;
+    __zero_table_start__ = .;
+
+    LONG(ADDR(.bss));
+    LONG(SIZEOF(.bss) / 4);
+
+
+    LONG(ADDR(.dtcmbss));
+    LONG(SIZEOF(.dtcmbss) / 4);
+
+    __zero_table_end__ = .;
+
+
   } >FLASH
 
   /* The program code and other data goes into FLASH */
@@ -144,12 +179,14 @@ SECTIONS
   _sidata = LOADADDR(.data);
 
   /* Initialized data sections goes into RAM, load LMA copy after code */
-  .data : 
+  .data :
   {
     . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
+    *(.ramfunc)
+    *(.ramfunc*)
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
@@ -180,20 +217,45 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
-  } >RAM_D1
+  } >RAM_D1 AT>RAM_D1
+  PROVIDE ( end = . );
+  PROVIDE ( _end = . );
 
-  /* User_heap_stack section, used to check that there is enough RAM left */
-  ._user_heap_stack :
+  .itcmtext :
   {
-    . = ALIGN(8);
-    PROVIDE ( end = . );
-    PROVIDE ( _end = . );
-    . = . + _Min_Heap_Size;
-    . = . + _Min_Stack_Size;
-    . = ALIGN(8);
-  } >RAM_D1
+    . = ALIGN(4);
+    __itcm_start = .;
+    KEEP(*(.itcmvtor))
+    *(.itcmdata)
+    *(.itcmdata*)
+    *(.itcmtext)
+    *(.itcmtext*)
+    . = ALIGN(4);
+    __itcm_end = .;
+  } >ITCMRAM AT>FLASH
+  __itcm_start_flash = LOADADDR(.itcmtext);
 
-  
+  .dtcmdata :
+  {
+    . = ALIGN(4);
+    __dtcm_data_start = .;
+    KEEP(*(.dtcmvtor))
+    *(.dtcmdata)
+    *(.dtcmdata*)
+    . = ALIGN(4);
+    __dtcm_data_end = .;
+  } >DTCMRAM AT>FLASH
+  __dtcm_start_flash = LOADADDR(.dtcmdata);
+
+  .dtcmbss (NOLOAD) :
+  {
+    . = ALIGN(4);
+    __dtcm_bss_start = .;
+    *(.dtcmbss)
+    *(.dtcmbss*)
+    . = ALIGN(4);
+    __dtcm_bss_end = .;
+  } >DTCMRAM
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
@@ -205,5 +267,3 @@ SECTIONS
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 }
-
-
