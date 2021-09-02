@@ -21,7 +21,7 @@ static void print_promt(void*)
     if (tud_cdc_connected())
         microrl_print_prompt(&rl);
     else
-        sched_scheduleBefore(&sched, 200, { nullptr, print_promt });
+        sched_scheduleBefore(&sched, 200, sched_mkfunc(print_promt));
 }
 
 static void cdc_task(void)
@@ -46,7 +46,7 @@ static int func_blink(int argc, const char* const* argv)
         printf("Cannot parse number <<%s>>\n", argv[1]);
         return -1;
     }
-    sched_scheduleEntryEvery(&sched, blink_sched, val, { nullptr, blink });
+    sched_scheduleEntryEvery(&sched, blink_sched, val, sched_mkfunc(blink));
     return 0;
 }
 
@@ -63,8 +63,8 @@ extern "C" void setup()
     microrl_set_execute_callback(&rl, exec_commands);
 
     sched_init(&sched, sched_list, arraySize(sched_list));
-    sched_scheduleBefore(&sched, 200, { nullptr, print_promt });
-    blink_sched = sched_scheduleEvery(&sched, 250, { nullptr, blink });
+    sched_scheduleBefore(&sched, 200, sched_mkfunc(print_promt));
+    blink_sched = sched_scheduleEvery(&sched, 250, sched_mkfunc(blink));
 }
 
 extern "C" void loop()

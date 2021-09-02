@@ -32,6 +32,13 @@ typedef struct {
 
 #define SCHED_FUNCTOR(ctx, func) ((sched_func_t) { ctx, func })
 
+static inline sched_func_t sched_mkfunc2(void* ctx, void (*func)(void*))
+{
+    return ((sched_func_t) { ctx, func });
+}
+
+static inline sched_func_t sched_mkfunc(void (*func)(void*)) { return sched_mkfunc2(NULL, func); }
+
 extern void sched_init(sched_t* self, sched_entry_t* pool, size_t count);
 extern sched_entry_t* sched_scheduleDefer(sched_t* self, sched_func_t e);
 extern sched_entry_t* sched_scheduleEvery(sched_t* self, timedelta_t t, sched_func_t e);
