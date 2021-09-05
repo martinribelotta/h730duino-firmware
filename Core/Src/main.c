@@ -284,7 +284,7 @@ static void MX_ETH_Init(void)
 {
 
   /* USER CODE BEGIN ETH_Init 0 */
-  return;
+
   /* USER CODE END ETH_Init 0 */
 
    static uint8_t MACAddr[6];

@@ -268,7 +268,7 @@ void SystemInit (void)
 #endif
 
 #endif /*DUAL_CORE && CORE_CM4*/
-  SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
+  SEGGER_RTT_Init();
 }
 
 /**

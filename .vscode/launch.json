@@ -14,13 +14,13 @@
             "configFiles": [
                 "interface/stlink.cfg",
                 "target/stm32h7x.cfg",
-                "${workspaceFolder}/reset_config.cfg"
+                "${workspaceFolder}/tools/reset_config.cfg"
             ],
             "runToMain": true,
             "svdFile": "${workspaceFolder}/STM32H73x.svd",
             "rttConfig": {
                 "enabled": true,
-                "address": "0x0000000024000898",
+                "address": "auto",
                 "searchId": "SEGGER RTT",
                 "searchSize": 16,
                 "clearSearch": false,
