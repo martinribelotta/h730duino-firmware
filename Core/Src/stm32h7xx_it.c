@@ -29,6 +29,23 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
 
+typedef struct {
+    uint32_t r0;
+    uint32_t r1;
+    uint32_t r2;
+    uint32_t r3;
+    uint32_t r12;
+    uint32_t lr;
+    uint32_t retaddr;
+    uint32_t xpsr;
+} context_save_base_t;
+
+typedef struct {
+    context_save_base_t base;
+    uint32_t s[16];
+    uint32_t fpscr;
+} context_save_ext_t;
+
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -59,6 +76,7 @@
 /* External variables --------------------------------------------------------*/
 
 /* USER CODE BEGIN EV */
+extern context_save_ext_t hardfault_ctx;
 
 /* USER CODE END EV */
 
@@ -86,7 +104,30 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
+  extern void hardfault_manager(void);
+  uint32_t *ret = (uint32_t*) (__get_MSP() + 0x18);
 
+  context_save_ext_t *sp = (context_save_ext_t*) __get_MSP();
+  hardfault_ctx.base.r0 = sp->base.r0;
+  hardfault_ctx.base.r1 = sp->base.r1;
+  hardfault_ctx.base.r2 = sp->base.r2;
+  hardfault_ctx.base.r3 = sp->base.r3;
+  hardfault_ctx.base.lr = sp->base.lr;
+  hardfault_ctx.base.r12 = sp->base.r12;
+  hardfault_ctx.base.retaddr = sp->base.retaddr;
+  hardfault_ctx.base.xpsr = sp->base.xpsr;
+  if (__get_CONTROL() && (1<<2)) {
+    for (size_t i = 0; i < TU_ARRAY_SIZE(sp->s); i++)
+      hardfault_ctx.s[0] = sp->s[0];
+    hardfault_ctx.fpscr = sp->fpscr;
+  }
+
+  /*
+   * This is tricky: We replace return pointer by a fake function
+   * and let to proceed.
+   */
+  *ret = (uint32_t) hardfault_manager;
+  return;
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
