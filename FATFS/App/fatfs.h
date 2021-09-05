@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FATFS_H__
-#define __FATFS_H__
+#ifndef __fatfs_H
+#define __fatfs_H
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -43,8 +43,7 @@ void MX_FATFS_Init(void);
 /* USER CODE END Prototypes */
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
-
+#endif
 #endif /*__fatfs_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

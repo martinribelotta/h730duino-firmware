@@ -82,8 +82,6 @@ uint8_t FATFS_UnLinkDriverEx(char *path, uint8_t lun)
   uint8_t DiskNum = 0;
   uint8_t ret = 1;
 
-  (void) lun;
-
   if(disk.nbr >= 1)
   {
     DiskNum = path[0] - '0';
