@@ -169,7 +169,7 @@ size_t qspi_read(uint8_t* buf, uint32_t addr, size_t count)
     return count;
 }
 
-static int qspi_cmd(int argc, const char* const* argv)
+DECL_CMD(qspi, "QSPI commands")
 {
     (void)argc;
     (void)argv;
@@ -184,5 +184,3 @@ static int qspi_cmd(int argc, const char* const* argv)
     hexdump(buf, 0, sizeof(buf));
     return 0;
 }
-
-static COMMAND_ENTRY(qspi, qspi_cmd, "QSPI commands");

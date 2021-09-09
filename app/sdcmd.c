@@ -147,7 +147,7 @@ static int sdcmd_cat(int argc, const char* const* argv)
     return 0;
 }
 
-static int func_sd(int argc, const char* const* argv)
+DECL_CMD(sd, "sd commands")
 {
     static const struct {
         const char* cmd;
@@ -183,5 +183,3 @@ valid_out:
     f_mount(&SDFatFS, NULL, 0);
     return ret;
 }
-
-static COMMAND_ENTRY(sd, func_sd, "sd commands");

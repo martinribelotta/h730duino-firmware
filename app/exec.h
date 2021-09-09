@@ -10,6 +10,11 @@
         func                                                   \
     }
 
+#define DECL_CMD(name, descr)                                 \
+    static int cmd_##name(int argc, const char* const* argv); \
+    static COMMAND_ENTRY(name, cmd_##name, descr);            \
+    static int cmd_##name(int argc, const char* const* argv)
+
 #ifdef __cplusplus
 extern "C" {
 #endif

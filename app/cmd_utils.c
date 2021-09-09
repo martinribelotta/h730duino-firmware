@@ -6,7 +6,7 @@
 
 #include <stm32h7xx_hal.h>
 
-static int cmd_memdump(int argc, const char* const* argv)
+DECL_CMD(md, "Hex dump memory")
 {
     if (argc < 2) {
         printf("%s [addr] <count:32>\n", argv[0]);
@@ -29,9 +29,7 @@ static int cmd_memdump(int argc, const char* const* argv)
     return 0;
 }
 
-static COMMAND_ENTRY(md, cmd_memdump, "Hex dump memory");
-
-static int cmd_dfu(int argc, const char* const* argv)
+DECL_CMD(dfu, "Start DFU")
 {
     (void)argc;
     (void)argv;
@@ -49,5 +47,3 @@ static int cmd_dfu(int argc, const char* const* argv)
     __asm__ volatile("bx %[boot_pc]\n\t" ::[boot_pc] "r"(boot_vtor[1]));
     return -1;
 }
-
-static COMMAND_ENTRY(dfu, cmd_dfu, "Start DFU");

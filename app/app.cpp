@@ -35,7 +35,7 @@ static void blink(void*)
     HAL_GPIO_TogglePin(USR_LED_GPIO_Port, USR_LED_Pin);
 }
 
-static int func_blink(int argc, const char* const* argv)
+DECL_CMD(blink, "Change blinking time")
 {
     if (argc < 2) {
         printf("Usage: %s <interval millis>\n", argv[0]);
@@ -49,8 +49,6 @@ static int func_blink(int argc, const char* const* argv)
     sched_scheduleEntryEvery(&sched, blink_sched, val, sched_mkfunc(blink));
     return 0;
 }
-
-static COMMAND_ENTRY(blink, func_blink, "Change blinking time");
 
 extern "C" void setup()
 {

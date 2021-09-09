@@ -6,8 +6,8 @@
 
 #include <stm32h7xx.h>
 
-#include "version.h"
 #include "utils.h"
+#include "version.h"
 
 extern const exec_command_entry_t _begin_command_table;
 extern const exec_command_entry_t _end_command_table;
@@ -25,7 +25,7 @@ int exec_commands(int argc, const char* const* argv)
     return -1;
 }
 
-static int func_help(int argc, const char* const* argv)
+DECL_CMD(help, "Show this help")
 {
     (void)argc;
     (void)argv;
@@ -38,9 +38,7 @@ static int func_help(int argc, const char* const* argv)
     return 0;
 }
 
-static const COMMAND_ENTRY(help, func_help, "Show this help");
-
-static int func_reset(int argc, const char* const* argv)
+DECL_CMD(reset, "Reset system")
 {
     (void)argc;
     (void)argv;
@@ -48,14 +46,10 @@ static int func_reset(int argc, const char* const* argv)
     return 0;
 }
 
-static const COMMAND_ENTRY(reset, func_reset, "Reset system");
-
-static int func_version(int argc, const char* const* argv)
+DECL_CMD(ver, "Show version")
 {
     (void)argc;
     (void)argv;
     printf("Version:\n%s\n", VERSION_STRING);
     return 0;
 }
-
-static const COMMAND_ENTRY(ver, func_version, "Show version");
