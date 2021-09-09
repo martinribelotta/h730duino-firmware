@@ -262,7 +262,7 @@ C_INCLUDES =  \
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -Wextra -fdata-sections -ffunction-sections
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -Wextra -fdata-sections -ffunction-sections -ffreestanding
+CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -Wextra -Werror -fdata-sections -ffunction-sections -ffreestanding
 CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions
 
 ifeq ($(DEBUG), 1)

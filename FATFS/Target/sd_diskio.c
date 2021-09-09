@@ -90,6 +90,8 @@ const Diskio_drvTypeDef  SD_Driver =
 
 static DSTATUS SD_CheckStatus(BYTE lun)
 {
+  (void) lun;
+
   Stat = STA_NOINIT;
 
   if(BSP_SD_GetCardState() == MSD_OK)
@@ -149,6 +151,8 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 {
   DRESULT res = RES_ERROR;
 
+  (void) lun;
+
   if(BSP_SD_ReadBlocks((uint32_t*)buff,
                        (uint32_t) (sector),
                        count, SD_TIMEOUT) == MSD_OK)
@@ -180,6 +184,8 @@ DRESULT SD_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
 {
   DRESULT res = RES_ERROR;
 
+  (void) lun;
+
   if(BSP_SD_WriteBlocks((uint32_t*)buff,
                         (uint32_t)(sector),
                         count, SD_TIMEOUT) == MSD_OK)
@@ -210,6 +216,8 @@ DRESULT SD_ioctl(BYTE lun, BYTE cmd, void *buff)
 {
   DRESULT res = RES_ERROR;
   BSP_SD_CardInfo CardInfo;
+
+  (void) lun;
 
   if (Stat & STA_NOINIT) return RES_NOTRDY;
 

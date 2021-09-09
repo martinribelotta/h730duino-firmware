@@ -20,7 +20,7 @@ DECL_CMD(phyrd, "Read ETH PHY reg")
         return -1;
     }
     HAL_ETH_ReadPHYRegister(&heth, 0, reg, &val);
-    printf("REG[0x%04lX] = %04lX %016lb\n", reg, val, val);
+    printf("REG[0x%04lX] = %04lX\n", reg, val);
     return 0;
 }
 

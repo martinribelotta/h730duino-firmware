@@ -49,7 +49,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-static void print_phyregs(ETH_HandleTypeDef *heth);
+
 /* USER CODE END PFP */
 
 /* External functions --------------------------------------------------------*/

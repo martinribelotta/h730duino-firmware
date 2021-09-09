@@ -603,6 +603,8 @@ int32_t  LAN8742_ClearIT(lan8742_Object_t *pObj, uint32_t Interrupt)
 {
   uint32_t readval = 0;
   int32_t status = LAN8742_STATUS_OK;  
+
+  (void) Interrupt;
   
   if(pObj->IO.ReadReg(pObj->DevAddr, LAN8742_ISFR, &readval) < 0)
   {

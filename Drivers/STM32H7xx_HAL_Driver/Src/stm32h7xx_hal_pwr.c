@@ -568,6 +568,8 @@ void HAL_PWR_EnterSLEEPMode (uint32_t Regulator, uint8_t SLEEPEntry)
   assert_param (IS_PWR_REGULATOR (Regulator));
   assert_param (IS_PWR_SLEEP_ENTRY (SLEEPEntry));
 
+  (void) Regulator;
+
   /* Clear SLEEPDEEP bit of Cortex System Control Register */
   CLEAR_BIT (SCB->SCR, SCB_SCR_SLEEPDEEP_Msk);
 
