@@ -1,3 +1,4 @@
+#include "app.h"
 #include "SEGGER_RTT.h"
 #include "exec.h"
 #include "main.h"
@@ -50,7 +51,7 @@ DECL_CMD(blink, "Change blinking time")
     return 0;
 }
 
-extern "C" void setup()
+void setup()
 {
     SEGGER_RTT_WriteString(0, "Hello World!\n");
     tusb_init();
@@ -65,7 +66,7 @@ extern "C" void setup()
     blink_sched = sched_scheduleEvery(&sched, 250, sched_mkfunc(blink));
 }
 
-extern "C" void loop()
+void loop()
 {
     sched_task();
     tud_task();
