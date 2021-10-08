@@ -25,7 +25,7 @@ DECL_CMD(md, "Hex dump memory")
         }
     }
     printf("Dump %ld bytes from 0x%08lX:\n", count, addr);
-    hexdump((uint8_t*)addr, addr, count);
+    chexdump((uint8_t*)addr, 0, count, 16);
     return 0;
 }
 

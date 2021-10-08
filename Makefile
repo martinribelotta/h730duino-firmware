@@ -292,6 +292,11 @@ LIBDIR =
 LDFLAGS := $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 LDFLAGS += -Wl,--print-memory-usage
 
+LD_SECTIONS:=$(shell grep -oP '\.[\.\w_]+\s*\:' $(LDSCRIPT) | cut -f 1 -d ':')
+$(info sections: $(LD_SECTIONS))
+
+DUMP_SECTION_FLAGS := $(addprefix -j, $(LD_SECTIONS))
+
 # include segger/rtt.mk tinyusb-0.10.1/tinyusb.mk mpaland-printf/printf.mk
 
 M := $(addsuffix /module.mk, $(MODULES))
@@ -359,7 +364,7 @@ $(BUILD_DIR)/%.dfu: $(BUILD_DIR)/%.bin | $(BUILD_DIR)
 
 $(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 	@echo GEN $(@F)
-	$(Q)$(OD) -dSx $< > $@
+	$(Q)$(OD) -dSx $(DUMP_SECTION_FLAGS) $< > $@
 
 $(BUILD_DIR):
 	@mkdir -p $@/o

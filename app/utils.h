@@ -28,6 +28,7 @@ static inline bool isEq(const char* a, const char* b)
 }
 
 extern void hexdump(const uint8_t *buf, size_t offset, size_t count);
+extern void chexdump(const uint8_t* buf, size_t offset, size_t n, int columns);
 
 #ifdef __cplusplus
 }
