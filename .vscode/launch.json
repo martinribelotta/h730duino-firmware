@@ -7,7 +7,7 @@
         {
             "name": "Cortex Debug",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/tst-h730.elf",
+            "executable": "./build/tst-h730",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
@@ -31,8 +31,7 @@
                         "type": "console"
                     }
                 ]
-            },
-            "preLaunchTask": "make all"
+            }
         }
     ]
 }
