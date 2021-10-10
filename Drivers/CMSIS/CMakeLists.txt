@@ -1,0 +1,9 @@
+add_library(CMSIS INTERFACE)
+target_include_directories(CMSIS INTERFACE ${CMAKE_CURRENT_LIST_DIR}/Include)
+file(GLOB CMSIS_H LIST_DIRECTORIES false ${CMAKE_CURRENT_LIST_DIR}/Include/*.h)
+target_sources(CMSIS INTERFACE "${CMSIS_H}")
+
+add_library(CMSIS_STM32H7xx INTERFACE)
+target_include_directories(CMSIS_STM32H7xx INTERFACE ${CMAKE_CURRENT_LIST_DIR}/Device/ST/STM32H7xx/Include)
+file(GLOB CMSIS_STM32H7xx_H LIST_DIRECTORIES false ${CMAKE_CURRENT_LIST_DIR}/Device/ST/STM32H7xx/Include/*.h)
+target_sources(CMSIS_STM32H7xx INTERFACE "${CMSIS_STM32H7xx_H}")
