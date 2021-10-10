@@ -4,6 +4,9 @@ set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain-arm_none_ea
 project(tst-h730)
 add_executable(tst-h730)
 enable_language(C CXX ASM)
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/utils.cmake)
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     -DUSE_HAL_DRIVER
     -DSTM32H730xx
@@ -11,8 +14,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     -DCFG_TUSB_MCU=OPT_MCU_STM32H7
     -DBOARD_DEVICE_RHPORT_NUM=1
 )
-
-target_link_options(${PROJECT_NAME} PRIVATE -T${CMAKE_CURRENT_SOURCE_DIR}/STM32H730ZBTx_FLASH.ld)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     Core/Inc
@@ -47,6 +48,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     tinyusb/src
     hisahi-scanf
 )
+target_add_all_headers(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PRIVATE
     Core/Src/main.c
@@ -219,8 +221,19 @@ target_sources(${PROJECT_NAME} PRIVATE
     hisahi-scanf/scanf.c
 )
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/utils.cmake)
-target_add_all_headers(${PROJECT_NAME})
-target_add_disassembler(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/STM32H730ZBTx_FLASH.ld)
+set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32H730ZBTx_FLASH.ld)
+
+target_link_options(${PROJECT_NAME} PRIVATE -T${LINKER_SCRIPT})
+target_add_disassembler(${PROJECT_NAME} ${LINKER_SCRIPT})
 target_add_bin(${PROJECT_NAME})
 target_add_hex(${PROJECT_NAME})
+
+list(APPEND openocd_configs "interface/stlink.cfg")
+list(APPEND openocd_configs "target/stm32h7x.cfg")
+list(APPEND openocd_configs "${CMAKE_CURRENT_SOURCE_DIR}/tools/reset_config.cfg")
+
+list(APPEND flash_commands "init")
+list(APPEND flash_commands "reset halt")
+list(APPEND flash_commands "program $<TARGET_FILE:${PROJECT_NAME}> verify reset exit")
+
+target_create_openocd_task(${PROJECT_NAME} flash "${openocd_configs}" "${flash_commands}")
