@@ -36,3 +36,14 @@ function(target_add_all_headers tgt)
         target_sources(${tgt} PRIVATE ${H})
     endforeach()
 endfunction()
+
+function(target_create_openocd_task tgt tgt_name cfg cmd)
+    list(TRANSFORM cfg PREPEND "-f")
+    list(TRANSFORM cmd PREPEND "-c")
+    add_custom_target(${tgt_name}-${tgt}
+        COMMAND openocd ${cfg} ${cmd}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        DEPENDS ${tgt}
+        COMMENT "Running openocd ${tgt_name}"
+        USES_TERMINAL)
+endfunction()
