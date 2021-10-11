@@ -9,6 +9,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/utils.cmake)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DUSE_HAL_DRIVER -DSTM32H730xx -DDATA_IN_D2_SRAM)
 
+set(VERSION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/app/version.c)
+add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E touch ${VERSION_FILE})
+
 target_add_src_inc_from(${PROJECT_NAME} PRIVATE Core)
 target_add_src_from(${PROJECT_NAME} PRIVATE app)
 target_add_src_from(${PROJECT_NAME} PRIVATE microrl)
