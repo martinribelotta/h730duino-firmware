@@ -46,7 +46,6 @@
 FDCAN_HandleTypeDef hfdcan1;
 
 OSPI_HandleTypeDef hospi1;
-OSPI_HandleTypeDef hospi2;
 
 RNG_HandleTypeDef hrng;
 
@@ -70,7 +69,6 @@ void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_FDCAN1_Init(void);
 static void MX_OCTOSPI1_Init(void);
-static void MX_OCTOSPI2_Init(void);
 static void MX_RTC_Init(void);
 static void MX_SDMMC1_SD_Init(void);
 static void MX_SPI4_Init(void);
@@ -125,7 +123,6 @@ int main(void)
   MX_GPIO_Init();
   MX_FDCAN1_Init();
   MX_OCTOSPI1_Init();
-  MX_OCTOSPI2_Init();
   MX_RTC_Init();
   MX_SDMMC1_SD_Init();
   MX_SPI4_Init();
@@ -324,7 +321,6 @@ static void MX_OCTOSPI1_Init(void)
   /* USER CODE END OCTOSPI1_Init 0 */
 
   OSPIM_CfgTypeDef sOspiManagerCfg = {0};
-  OSPI_HyperbusCfgTypeDef sHyperBusCfg = {0};
 
   /* USER CODE BEGIN OCTOSPI1_Init 1 */
 
@@ -333,13 +329,13 @@ static void MX_OCTOSPI1_Init(void)
   hospi1.Instance = OCTOSPI1;
   hospi1.Init.FifoThreshold = 1;
   hospi1.Init.DualQuad = HAL_OSPI_DUALQUAD_DISABLE;
-  hospi1.Init.MemoryType = HAL_OSPI_MEMTYPE_HYPERBUS;
-  hospi1.Init.DeviceSize = 32;
+  hospi1.Init.MemoryType = HAL_OSPI_MEMTYPE_MICRON;
+  hospi1.Init.DeviceSize = 22;
   hospi1.Init.ChipSelectHighTime = 1;
   hospi1.Init.FreeRunningClock = HAL_OSPI_FREERUNCLK_DISABLE;
   hospi1.Init.ClockMode = HAL_OSPI_CLOCK_MODE_0;
   hospi1.Init.WrapSize = HAL_OSPI_WRAP_NOT_SUPPORTED;
-  hospi1.Init.ClockPrescaler = 1;
+  hospi1.Init.ClockPrescaler = 200;
   hospi1.Init.SampleShifting = HAL_OSPI_SAMPLE_SHIFTING_NONE;
   hospi1.Init.DelayHoldQuarterCycle = HAL_OSPI_DHQC_DISABLE;
   hospi1.Init.ChipSelectBoundary = 1;
@@ -351,78 +347,16 @@ static void MX_OCTOSPI1_Init(void)
   {
     Error_Handler();
   }
-  sOspiManagerCfg.ClkPort = 2;
-  sOspiManagerCfg.DQSPort = 2;
-  sOspiManagerCfg.NCSPort = 2;
-  sOspiManagerCfg.IOLowPort = HAL_OSPIM_IOPORT_2_LOW;
-  sOspiManagerCfg.IOHighPort = HAL_OSPIM_IOPORT_1_LOW;
+  sOspiManagerCfg.ClkPort = 1;
+  sOspiManagerCfg.NCSPort = 1;
+  sOspiManagerCfg.IOLowPort = HAL_OSPIM_IOPORT_1_HIGH;
   if (HAL_OSPIM_Config(&hospi1, &sOspiManagerCfg, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sHyperBusCfg.RWRecoveryTime = 0;
-  sHyperBusCfg.AccessTime = 0;
-  sHyperBusCfg.WriteZeroLatency = HAL_OSPI_NO_LATENCY_ON_WRITE;
-  sHyperBusCfg.LatencyMode = HAL_OSPI_VARIABLE_LATENCY;
-  if (HAL_OSPI_HyperbusCfg(&hospi1, &sHyperBusCfg, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN OCTOSPI1_Init 2 */
 
   /* USER CODE END OCTOSPI1_Init 2 */
-
-}
-
-/**
-  * @brief OCTOSPI2 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_OCTOSPI2_Init(void)
-{
-
-  /* USER CODE BEGIN OCTOSPI2_Init 0 */
-
-  /* USER CODE END OCTOSPI2_Init 0 */
-
-  OSPIM_CfgTypeDef sOspiManagerCfg = {0};
-
-  /* USER CODE BEGIN OCTOSPI2_Init 1 */
-
-  /* USER CODE END OCTOSPI2_Init 1 */
-  /* OCTOSPI2 parameter configuration*/
-  hospi2.Instance = OCTOSPI2;
-  hospi2.Init.FifoThreshold = 1;
-  hospi2.Init.DualQuad = HAL_OSPI_DUALQUAD_DISABLE;
-  hospi2.Init.MemoryType = HAL_OSPI_MEMTYPE_MICRON;
-  hospi2.Init.DeviceSize = 22;
-  hospi2.Init.ChipSelectHighTime = 1;
-  hospi2.Init.FreeRunningClock = HAL_OSPI_FREERUNCLK_DISABLE;
-  hospi2.Init.ClockMode = HAL_OSPI_CLOCK_MODE_0;
-  hospi2.Init.WrapSize = HAL_OSPI_WRAP_NOT_SUPPORTED;
-  hospi2.Init.ClockPrescaler = 8;
-  hospi2.Init.SampleShifting = HAL_OSPI_SAMPLE_SHIFTING_NONE;
-  hospi2.Init.DelayHoldQuarterCycle = HAL_OSPI_DHQC_DISABLE;
-  hospi2.Init.ChipSelectBoundary = 1;
-  hospi2.Init.ClkChipSelectHighTime = 0;
-  hospi2.Init.DelayBlockBypass = HAL_OSPI_DELAY_BLOCK_BYPASSED;
-  hospi2.Init.MaxTran = 0;
-  hospi2.Init.Refresh = 0;
-  if (HAL_OSPI_Init(&hospi2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sOspiManagerCfg.ClkPort = 1;
-  sOspiManagerCfg.NCSPort = 1;
-  sOspiManagerCfg.IOLowPort = HAL_OSPIM_IOPORT_1_HIGH;
-  if (HAL_OSPIM_Config(&hospi2, &sOspiManagerCfg, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN OCTOSPI2_Init 2 */
-
-  /* USER CODE END OCTOSPI2_Init 2 */
 
 }
 
@@ -688,7 +622,6 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
@@ -724,6 +657,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(ETH_RST_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PG15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF9_OCTOSPIM_P2;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
 }
 

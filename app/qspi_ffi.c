@@ -25,7 +25,7 @@
 extern OSPI_HandleTypeDef hospi1;
 extern OSPI_HandleTypeDef hospi2;
 
-#define pQSPI (&hospi2)
+#define pQSPI (&hospi1)
 
 static const char* st2str(HAL_StatusTypeDef st)
 {
