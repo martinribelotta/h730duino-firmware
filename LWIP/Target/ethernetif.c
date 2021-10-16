@@ -177,7 +177,9 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef* ethHandle)
     HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
   /* USER CODE BEGIN ETH_MspInit 1 */
-
+  HAL_GPIO_WritePin(ETH_RST_GPIO_Port, ETH_RST_Pin, 0);
+  HAL_Delay(100);
+  HAL_GPIO_WritePin(ETH_RST_GPIO_Port, ETH_RST_Pin, 1);
   /* USER CODE END ETH_MspInit 1 */
   }
 }
