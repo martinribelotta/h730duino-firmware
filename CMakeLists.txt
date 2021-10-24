@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain-arm_none_eabi.cmake)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(tst-h730)
 add_executable(tst-h730)
